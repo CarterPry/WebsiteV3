@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import Hero from '../components/Hero.astro';
+import PostPreview from '../components/PostPreview.astro';
+import siteConfig from '../data/site-config';
+import { sortItemsByDateDesc } from '../utils/data-utils';
+
+// Fetching posts and filtering featured posts
+const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
+const featuredPosts = posts.filter(({ data }) => data.isFeatured);
+
+const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
+const featuredProjects = projects.filter(({ data }) => data.isFeatured);
+---
+
+<BaseLayout description={siteConfig.description} image={siteConfig.image}>
+    <Hero />
+    {
+        featuredPosts?.length > 0 && (
+            <div slot="wideSlot" class="mb-8 sm:mb-12">
+                {/* Grid container for featured posts */}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 px-4 sm:px-16 mx-auto max-w-screen-xl overflow-hidden border-0 border-red-500">
+                    {featuredPosts.map((post) => (
+                        <PostPreview post={post} class="mb-6 sm:mb-12 w-full pl-6 sm:pl-8 lg:pl-16" headingLevel="h3" showExcerpt={false} />
+                    ))}
+                </div>
+                {/* View All Posts Button */}
+                <div class="mt-10 sm:mt-6 text-center">
+                    <Button href="/blog">View All Posts</Button>
+                </div>
+            </div>
+        )
+    }
+</BaseLayout>

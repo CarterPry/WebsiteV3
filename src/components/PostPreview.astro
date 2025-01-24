@@ -1,0 +1,40 @@
+---
+import { type CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+type Props = {
+    post: CollectionEntry<'blog'>;
+    class?: string;
+    headingLevel?: 'h2' | 'h3';
+    showExcerpt?: boolean;
+};
+
+const { post, class: className, headingLevel = 'h2', showExcerpt = true } = Astro.props;
+const { title, publishDate, updatedDate, excerpt } = post.data;
+const TitleTag = headingLevel;
+---
+
+<a class:list={['block w-full group', className]} href={`/blog/${post.id}/`}>
+    <div class="grow">
+        {/* Title with dotted underline hover effect */}
+        <TitleTag
+            class="text-xl leading-tight font-serif font-medium group-hover:underline group-hover:decoration-dashed group-hover:underline-offset-4 group-hover:decoration-1 sm:text-2xl"
+        >
+            {title}
+        </TitleTag>
+        {/* Publish and updated date */}
+        <div class="mt-1 text-sm leading-normal">
+            <FormattedDate date={publishDate} />
+            {
+                updatedDate && (
+                    <span>
+                        {' '}
+                        (Updated on <FormattedDate date={updatedDate} />)
+                    </span>
+                )
+            }
+        </div>
+        {/* Optional excerpt */}
+        {showExcerpt && excerpt && <div class="mt-3 text-sm leading-normal">{excerpt}</div>}
+    </div>
+</a>
